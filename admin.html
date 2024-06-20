@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Verify Accounts</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .admin-container {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 400px;
+        }
+        .admin-container h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .account {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .account img {
+            width: 100%;
+            max-width: 150px;
+            margin-bottom: 10px;
+        }
+        .account button {
+            padding: 10px;
+            border: none;
+            background-color: #BCF527;
+            color: #000000;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .account button:hover {
+            background-color: #b321ec;
+            color: #ffffff;
+        }
+        .account button.verify {
+            background-color: #007bff;
+        }
+        .account button.verify:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>Verify Accounts</h2>
+        <div id="accountsContainer"></div>
+    </div>
+
+    <script>
+        function loadAccounts() {
+            const accountsContainer = document.getElementById('accountsContainer');
+            accountsContainer.innerHTML = '';
+            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+
+            accounts.forEach((account, index) => {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account';
+                accountDiv.innerHTML = `
+                    <p><strong>Email:</strong> ${account.email}</p>
+                    <p><strong>Date of Birth:</strong> ${account.dob}</p>
+                    <p><strong>Verified:</strong> ${account.verified ? 'Yes' : 'No'}</p>
+                    <img src="${account.idPhoto}" alt="ID Photo">
+                    <button class="verify" onclick="verifyAccount(${index})">Verify</button>
+                    <button onclick="deleteAccount(${index})">Delete</button>
+                `;
+                accountsContainer.appendChild(accountDiv);
+            });
+        }
+
+        function verifyAccount(index) {
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            accounts[index].verified = true;
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            loadAccounts();
+        }
+
+        function deleteAccount(index) {
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            accounts.splice(index, 1);
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            loadAccounts();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAccounts);
+    </script>
+</body>
+</html>
