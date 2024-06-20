@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrizePicks Entries</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #FFFFFF;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0d0d0d;
+            color: white;
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .burger-menu {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 20px;
+        }
+
+        .burger-menu div {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+        }
+
+        .logo {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .account-balance {
+            margin-left: auto;
+            font-weight: bold;
+        }
+
+        .account-balance span {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .navbar {
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #0d0d0d;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: inline-block;
+            background-color: #BCF527;
+            border: none;
+            color: black;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px 15px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #b321ec;
+            color: white;
+        }
+
+        .prizepicks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .prizepicks-entry {
+            background: #2e2e2e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 250px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .prizepicks-stats-number {
+            font-size: 16px;
+            color: #D4D3DA;
+        }
+
+        .prizepicks-player-image img {
+            width: auto;
+            height: auto;
+            max-height: 90px;
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+
+        .prizepicks-team-position {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .prizepicks-player-name {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .prizepicks-start-time {
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .prizepicks-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .prizepicks-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .prizepicks-category {
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .prizepicks-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .prizepicks-button {
+            background: #BCF527;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #000000;
+            cursor: pointer;
+            width: 45%;
+            transition: background 0.3s ease;
+        }
+
+        .prizepicks-button.selected {
+            background: #b321ec;
+            color: #fff;
+        }
+
+        .menu-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .menu-popup.active {
+            display: flex;
+        }
+
+        .menu-popup .top-half,
+        .menu-popup .bottom-half {
+            width: 80%;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .menu-popup .bottom-half {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-popup button {
+            background-color: #BCF527;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .menu-popup button:hover {
+            background-color: #b321ec;
+            color: white;
+        }
+
+        .menu-popup .close-popup {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #b321ec;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .menu-popup .useful-links {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .menu-popup .useful-links li {
+            margin: 10px 0;
+        }
+
+        .menu-popup .useful-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .menu-popup .useful-links a:hover {
+            text-decoration: underline;
+        }
+
+        .mini-popup-bar {
+            display: none;
+            position: fixed;
+            bottom: 50px;
+            left: 10px;
+            right: 10px;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-radius: 5px;
+        }
+
+        .mini-popup-bar .info {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .mini-popup-bar .finalize-button {
+            background-color: #BCF527;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .mini-popup-bar .finalize-button:hover {
+            background-color: #b321ec;
+            color: #fff;
+        }
+
+        .popup-summary {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1f1f1f;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .popup-summary h2 {
+            margin-top: 0;
+        }
+
+        .popup-summary .summary-content {
+            margin-bottom: 20px;
+        }
+
+        .popup-summary .entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .popup-summary .entry img {
+            width: auto;
+            height: auto;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .popup-summary .entry-info {
+            flex-grow: 1;
+        }
+
+        .popup-summary .entry-fee {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .popup-summary .entry-fee input {
+            width: 50%;
+            padding: 5px;
+            font-size: 16px;
+            background-color: #333;
+            border: 1px solid #555;
+            color: #fff;
+        }
+
+        .popup-summary .calculate-payout {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-summary .calculate-payout span {
+            font-weight: bold;
+        }
+
+        .popup-summary .close-button,
+        .popup-summary .place-button {
+            background-color: #b321ec;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .popup-summary .place-button {
+            background-color: #BCF527;
+            color: black;
+        }
+
+        .popup-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1002;
+        }
+
+        .popup-summary .place-button.disabled {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        .confirm-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1f1f1f;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1003;
+            width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .confirm-popup h2 {
+            margin-top: 0;
+        }
+
+        .confirm-popup .confirm-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .confirm-popup .confirm-button,
+        .confirm-popup .cancel-button {
+            background-color: #b321ec;
+            border: none;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: block;
+            width: 45%;
+            text-align: center;
+        }
+
+        .confirm-popup .confirm-button {
+            background-color: #BCF527;
+            color: black;
+        }
+
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #0d0d0d;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .bottom-navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            text-align: center;
+            flex-grow: 1;
+            font-weight: bold;
+        }
+
+        .bottom-navbar a.active {
+            color: #BCF527;
+        }
+
+        .bottom-space {
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="burger-menu" onclick="toggleMenu()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="account-balance">
+        £120.00
+    </div>
+</header>
+
+<div class="navbar">
+    <button class="nav-item" onclick="filterEntries('Popular 🔥')">Popular 🔥</button>
+    <button class="nav-item" onclick="filterEntries('Goals')">Goals</button>
+    <button class="nav-item" onclick="filterEntries('Saves')">Saves</button>
+    <button class="nav-item" onclick="filterEntries('Shots')">Shots</button>
+    <button class="nav-item" onclick="filterEntries('Shots on Target')">Shots on Target</button>
+    <button class="nav-item" onclick="filterEntries('Tackles')">Tackles</button>
+    <button class="nav-item" onclick="filterEntries('Fouls Won')">Fouls Won</button>
+    <button class="nav-item" onclick="filterEntries('Fouls')">Fouls</button>
+</div>
+
+<div class="prizepicks-container">
+    <!-- Cristiano Ronaldo - Shots -->
+    <div class="prizepicks-entry" data-category="Shots" data-player="Cristiano Ronaldo" data-image="https://static.prizepicks.com/images/manual/Cristiano%20Ronaldo.png" data-match="vs Czechia" data-date="2024-06-20T20:00:00">
+        <div class="prizepicks-info">
+            <div class="prizepicks-player-image">
+                <img src="https://static.prizepicks.com/images/manual/Cristiano%20Ronaldo.png" alt="Cristiano Ronaldo">
+            </div>
+            <div>
+                <div class="prizepicks-player-name">Cristiano Ronaldo</div>
+                <div class="prizepicks-team-position">Portugal - Attacker</div>
+                <div class="prizepicks-start-time">vs Czechia Thu 8:00pm</div>
+                <div class="prizepicks-stats">
+                    <div class="prizepicks-value">4.0</div>
+                    <div class="prizepicks-category">Shots</div>
+                </div>
+                <div class="prizepicks-buttons">
+                    <button class="prizepicks-button less-button" onclick="buttonClick(this)">LESS</button>
+                    <button class="prizepicks-button more-button" onclick="buttonClick(this)">MORE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jindrich Stanek - Saves -->
+    <div class="prizepicks-entry" data-category="Saves" data-player="Jindrich Stanek" data-image="https://static.prizepicks.com/images/manual/Jindrich%20Stanek.png" data-match="vs Portugal" data-date="2024-06-20T20:00:00">
+        <div class="prizepicks-info">
+            <div class="prizepicks-player-image">
+                <img src="https://static.prizepicks.com/images/manual/Jindrich%20Stanek.png" alt="Jindrich Stanek">
+            </div>
+            <div>
+                <div class="prizepicks-player-name">Jindrich Stanek</div>
+                <div class="prizepicks-team-position">Czechia - Goalkeeper</div>
+                <div class="prizepicks-start-time">vs Portugal Thu 8:00pm</div>
+                <div class="prizepicks-stats">
+                    <div class="prizepicks-value">4.0</div>
+                    <div class="prizepicks-category">Saves</div>
+                </div>
+                <div class="prizepicks-buttons">
+                    <button class="prizepicks-button less-button" onclick="buttonClick(this)">LESS</button>
+                    <button class="prizepicks-button more-button" onclick="buttonClick(this)">MORE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diogo Costa - Saves -->
+    <div class="prizepicks-entry" data-category="Saves" data-player="Diogo Costa" data-image="https://static.prizepicks.com/images/manual/Diogo%20Costa.png" data-match="vs Czechia" data-date="2024-06-20T20:00:00">
+        <div class="prizepicks-info">
+            <div class="prizepicks-player-image">
+                <img src="https://static.prizepicks.com/images/manual/Diogo%20Costa.png" alt="Diogo Costa">
+            </div>
+            <div>
+                <div class="prizepicks-player-name">Diogo Costa</div>
+                <div class="prizepicks-team-position">Portugal - Goalkeeper</div>
+                <div class="prizepicks-start-time">vs Czechia Thu 8:00pm</div>
+                <div class="prizepicks-stats">
+                    <div class="prizepicks-value">2.0</div>
+                    <div class="prizepicks-category">Saves</div>
+                </div>
+                <div class="prizepicks-buttons">
+                    <button class="prizepicks-button less-button" onclick="buttonClick(this)">LESS</button>
+                    <button class="prizepicks-button more-button" onclick="buttonClick(this)">MORE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-space"></div>
+</div>
+
+<div id="miniPopupBar" class="mini-popup-bar">
+    <div class="info">
+        <span id="selectedCount">0</span> picks, To Win: <span id="potentialPayout">0</span>x
+    </div>
+    <button class="finalize-button" onclick="finalizeLineup()">Finalize Lineup</button>
+</div>
+
+<div id="menuPopup" class="menu-popup">
+    <button class="close-popup" onclick="toggleMenu()">Close</button>
+    <div class="top-half">
+        <button>Home</button>
+        <button>Promotions</button>
+        <button>Help</button>
+    </div>
+    <div class="bottom-half">
+        <ul class="useful-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- Popup Summary -->
+<div id="popupSummary" class="popup-summary">
+    <h2>Summary of Your Picks</h2>
+    <div class="summary-content" id="summaryContent"></div>
+    <div class="entry-fee">
+        <label for="entryFee">Entry Fee: £</label>
+        <input type="number" id="entryFee" oninput="validateEntryFee()" min="5" max="100" step="1">
+        <div id="entryFeeError" style="color: red; display: none;">Entry fee must be between £5 and £100.</div>
+        <div id="startTimeError" style="color: red; display: none;">Start time passed for at least one pick.</div>
+    </div>
+    <div class="calculate-payout">
+        <span>Potential Payout: £<span id="potentialPayoutSummary">0</span></span>
+    </div>
+    <button class="place-button" id="placeButton" onclick="showConfirmPopup()">Place Entry</button>
+    <button class="close-button" onclick="closePopup()">Close</button>
+</div>
+
+<!-- Confirm Popup -->
+<div id="confirmPopup" class="confirm-popup">
+    <h2>Confirm Your Lineup</h2>
+    <p>Are you sure you want to place this entry?</p>
+    <div class="confirm-buttons">
+        <button class="confirm-button" onclick="confirmPlaceEntry()">Confirm</button>
+        <button class="cancel-button" onclick="cancelPlaceEntry()">Cancel</button>
+    </div>
+</div>
+
+<div id="popupMessage" class="popup-message"></div>
+
+<div class="bottom-navbar">
+    <a href="https://accapicks.com/lineup-page/" class="nav-link active">Board</a>
+    <a href="https://accapicks.com/my-lineups/" class="nav-link">My Lineups</a>
+    <a href="#" class="nav-link">Get £25</a>
+    <a href="#" class="nav-link">Promos</a>
+    <a href="#" class="nav-link">Help</a>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<script>
+    let selectedCount = 0;
+    let selectedEntries = JSON.parse(localStorage.getItem('selectedEntries')) || [];
+    let finalizedLineups = JSON.parse(localStorage.getItem('finalizedLineups')) || [];
+
+    function buttonClick(button) {
+        if (button.classList.contains('disabled')) return;
+
+        const buttonContainer = button.parentElement;
+        const entry = button.closest('.prizepicks-entry');
+        const isSelected = button.classList.contains('selected');
+        const lessButton = buttonContainer.querySelector('.less-button');
+        const moreButton = buttonContainer.querySelector('.more-button');
+
+        if (isSelected) {
+            button.classList.remove('selected');
+            selectedCount--;
+            removeEntry(entry);
+        } else {
+            if (lessButton.classList.contains('selected') || moreButton.classList.contains('selected')) {
+                lessButton.classList.remove('selected');
+                moreButton.classList.remove('selected');
+                removeEntry(entry);
+                button.classList.add('selected');
+                addEntry(entry);
+            } else {
+                if (selectedCount < 4) {
+                    button.classList.add('selected');
+                    selectedCount++;
+                    addEntry(entry);
+                }
+            }
+        }
+
+        updateMiniPopupBar();
+    }
+
+    function addEntry(entry) {
+        const entryData = {
+            id: entry.dataset.category + "-" + entry.dataset.player,
+            category: entry.dataset.category,
+            player: entry.dataset.player,
+            stat: entry.querySelector('.prizepicks-value').textContent,
+            type: entry.querySelector('.selected').textContent,
+            image: entry.dataset.image,
+            match: entry.dataset.match,
+            date: entry.dataset.date
+        };
+        selectedEntries.push(entryData);
+        localStorage.setItem('selectedEntries', JSON.stringify(selectedEntries));
+    }
+
+    function removeEntry(entry) {
+        const entryId = entry.dataset.category + "-" + entry.dataset.player;
+        selectedEntries = selectedEntries.filter(e => e.id !== entryId);
+        localStorage.setItem('selectedEntries', JSON.stringify(selectedEntries));
+    }
+
+    function finalizeLineup() {
+        if (selectedEntries.length > 0) {
+            saveFinalizedLineup();
+        } else {
+            alert('Please select at least one entry to finalize your lineup.');
+        }
+    }
+
+    function saveFinalizedLineup() {
+        let potentialPayout = 0;
+        const entryFee = 10; // Example entry fee
+        if (selectedCount === 2) {
+            potentialPayout = entryFee * 3;
+        } else if (selectedCount === 3) {
+            potentialPayout = entryFee * 5;
+        } else if (selectedCount === 4) {
+            potentialPayout = entryFee * 10;
+        }
+
+        const lineup = {
+            entries: selectedEntries,
+            entryFee: entryFee,
+            potentialPayout: potentialPayout
+        };
+
+        finalizedLineups.push(lineup);
+        localStorage.setItem('finalizedLineups', JSON.stringify(finalizedLineups));
+        resetSelections();
+    }
+
+    function resetSelections() {
+        const buttons = document.querySelectorAll('.prizepicks-button');
+        buttons.forEach(button => {
+            button.classList.remove('selected');
+        });
+        selectedCount = 0;
+        selectedEntries = [];
+        localStorage.setItem('selectedEntries', JSON.stringify(selectedEntries));
+        updateMiniPopupBar();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateMiniPopupBar();
+    });
+
+    function updateMiniPopupBar() {
+        const miniPopupBar = document.getElementById('miniPopupBar');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        const potentialPayoutSpan = document.getElementById('potentialPayout');
+        let potentialPayout = 0;
+
+        if (selectedCount === 2) {
+            potentialPayout = 3;
+        } else if (selectedCount === 3) {
+            potentialPayout = 5;
+        } else if (selectedCount === 4) {
+            potentialPayout = 10;
+        }
+
+        selectedCountSpan.textContent = selectedCount;
+        potentialPayoutSpan.textContent = potentialPayout;
+
+        if (selectedCount > 0) {
+            miniPopupBar.style.display = 'flex';
+        } else {
+            miniPopupBar.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
