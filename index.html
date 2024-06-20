@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrizePicks Home</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0d0d0d;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .header .signup-button {
+            background-color: #BCF527;
+            color: #000000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .header .signup-button:hover {
+            background-color: #b321ec;
+            color: white;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .play-button {
+            background-color: #BCF527;
+            color: #000000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .play-button:hover {
+            background-color: #b321ec;
+            color: white;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .feature img {
+            width: 200px; /* Twice the size */
+            height: auto;
+        }
+
+        .feature h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .feature p {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .lineup-container {
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .lineup-card {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .lineup-card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #BCF527;
+        }
+
+        .lineup-card .lineup-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .lineup-card .lineup-entry img {
+            width: 50px;
+            height: auto;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .lineup-card .entry-info {
+            flex-grow: 1;
+        }
+
+        .lineup-card .entry-info div {
+            margin: 2px 0;
+        }
+
+        .lineup-card .progress-bar-container {
+            width: 100%;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            height: 20px;
+            margin-top: 10px;
+        }
+
+        .lineup-card .progress-bar {
+            height: 100%;
+            background-color: #BCF527;
+            transition: width 0.3s ease;
+        }
+
+        .lineup-card .progress-value {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+        }
+
+        .lineup-card .entry-value {
+            color: #BCF527;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .lineup-card .status {
+            color: #BCF527;
+            font-weight: bold;
+        }
+
+        .section {
+            padding: 20px 0;
+        }
+
+        .section img {
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .section h2 {
+            color: #BCF527;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">ACCAPICKS</div>
+        <a href="https://accapicks.com/register/" class="signup-button">Sign Up</a>
+    </header>
+
+    <div class="content">
+        <h1>THE UK'S #1 FANTASY SPORTS APP</h1>
+        <h2>GET YOUR FIRST DEPOSIT MATCHED UP TO <span style="color:#BCF527;">£100</span></h2>
+        <a href="https://accapicks.com/register/" class="play-button">Play Now</a>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <img src="https://cdn.prod.website-files.com/64b5f8bfc12b3ec8aef889d7/64dabbc250faf2aa2984b932_cash.png" alt="Big Cash Payouts">
+            <h3>Big Cash Payouts Up to 10x</h3>
+        </div>
+        <div class="feature">
+            <img src="https://cdn.prod.website-files.com/64b5f8bfc12b3ec8aef889d7/64dd4cf1f196f7b9417b07ac_morethan-lessthan.png" alt="Fast & Secure Withdrawals">
+            <h3>Just Pick More Or Less</h3>
+        </div>
+        <div class="feature">
+            <img src="https://cdn.prod.website-files.com/64b5f8bfc12b3ec8aef889d7/65e0b248f33d54d32d6229d0_EZ.png" alt="Live Support">
+            <h3>It's That Easy</h3>
+        </div>
+    </div>
+
+</body>
+</html>
