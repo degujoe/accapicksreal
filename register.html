@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .register-container {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+        .register-container h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .register-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .register-container input[type="email"],
+        .register-container input[type="password"],
+        .register-container input[type="date"],
+        .register-container input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        .register-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #BCF527;
+            color: #000000;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .register-container button:hover {
+            background-color: #b321ec;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="idPhoto">Photo of ID</label>
+            <input type="file" id="idPhoto" name="idPhoto" accept="image/*" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const dob = document.getElementById('dob').value;
+            const idPhoto = document.getElementById('idPhoto').files[0];
+
+            if (idPhoto) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const account = {
+                        email,
+                        password,
+                        dob,
+                        idPhoto: reader.result,
+                        verified: false
+                    };
+
+                    let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+                    accounts.push(account);
+                    localStorage.setItem('accounts', JSON.stringify(accounts));
+                    
+                    alert('Registration submitted. Awaiting verification.');
+                };
+                reader.readAsDataURL(idPhoto);
+            }
+        });
+    </script>
+</body>
+</html>
