@@ -10,28 +10,56 @@
             color: #FFFFFF;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
+            box-sizing: border-box;
         }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0d0d0d;
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
         .login-container {
             background-color: #1a1a1a;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 300px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 60px; /* Ensure it doesn't overlap with the header */
+            box-sizing: border-box;
         }
+
         .login-container h2 {
             margin-top: 0;
             text-align: center;
         }
+
         .login-container label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+
         .login-container input[type="email"],
         .login-container input[type="password"] {
             width: 100%;
@@ -41,7 +69,9 @@
             border-radius: 5px;
             background-color: #333;
             color: #fff;
+            box-sizing: border-box;
         }
+
         .login-container button {
             width: 100%;
             padding: 10px;
@@ -52,7 +82,9 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-sizing: border-box;
         }
+
         .login-container button:hover {
             background-color: #b321ec;
             color: #ffffff;
@@ -60,6 +92,9 @@
     </style>
 </head>
 <body>
+    <header class="header">
+        <div class="logo">ACCAPICKS</div>
+    </header>
     <div class="login-container">
         <h2>Login</h2>
         <form id="loginForm">
