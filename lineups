@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Lineups</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0d0d0d;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .header .account-balance {
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .lineup-card {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .lineup-card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #BCF527;
+        }
+
+        .lineup-entry {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .lineup-entry:last-child {
+            border-bottom: none;
+        }
+
+        .lineup-entry img {
+            width: auto;
+            height: auto;
+            max-height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .entry-info {
+            flex-grow: 1;
+        }
+
+        .entry-info div {
+            margin: 2px 0;
+        }
+
+        .entry-value {
+            color: #BCF527;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .status {
+            color: #BCF527;
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            height: 20px;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .progress-value {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+        }
+
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #0d0d0d;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navbar a.active {
+            color: #BCF527;
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="logo">ACCAPICKS</div>
+    <div class="account-balance">£120.00</div>
+</header>
+<div class="content">
+    <h1>My Lineups</h1>
+    <div id="lineups-container"></div>
+</div>
+<div class="navbar">
+    <a href="https://accapicks.com/lineup-page/" class="nav-link">Board</a>
+    <a href="https://accapicks.com/my-lineups/" class="active">My Lineups</a>
+    <a href="#">Get £25</a>
+    <a href="#">Promos</a>
+    <a href="#">Help</a>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lineupsContainer = document.getElementById('lineups-container');
+        const finalizedLineups = JSON.parse(localStorage.getItem('finalizedLineups')) || [];
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const options = { hour: '2-digit', minute: '2-digit' };
+            return date.toLocaleTimeString('en-US', options);
+        }
+
+        function formatDay(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { weekday: 'long' });
+        }
+
+        function getOpponent(match) {
+            const parts = match.split(' ');
+            return parts.slice(1).join(' ');
+        }
+
+        function updateProgressBar(player, stat, value, type, lineupIndex, entryIndex) {
+            const progressBar = document.querySelector(`.lineup-card[data-lineup-index="${lineupIndex}"] .lineup-entry[data-entry-index="${entryIndex}"] .progress-bar`);
+            const progressValue = document.querySelector(`.lineup-card[data-lineup-index="${lineupIndex}"] .lineup-entry[data-entry-index="${entryIndex}"] .progress-value`);
+
+            const percentage = (value / parseFloat(stat)) * 100;
+            progressBar.style.width = `${percentage}%`;
+
+            if ((type === 'MORE' && value > parseFloat(stat)) || (type === 'LESS' && value < parseFloat(stat))) {
+                progressBar.style.backgroundColor = '#BCF527'; // Green for winning
+            } else {
+                progressBar.style.backgroundColor = '#b321ec'; // Purple for losing
+            }
+
+            progressValue.textContent = value;
+        }
+
+        // Simulated ACF data
+        const playerStats = {
+            "Jordan Pickford": 1,
+            "Phil Foden": 3,
+            "Harry Kane": 2
+        };
+
+        if (finalizedLineups.length > 0) {
+            finalizedLineups.forEach((lineup, lineupIndex) => {
+                const lineupCard = document.createElement('div');
+                lineupCard.className = 'lineup-card';
+                lineupCard.setAttribute('data-lineup-index', lineupIndex);
+                lineupCard.innerHTML = `<h2>Lineup ${lineupIndex + 1}</h2>`;
+
+                lineup.entries.forEach((entry, entryIndex) => {
+                    const lineupEntry = document.createElement('div');
+                    lineupEntry.className = 'lineup-entry';
+                    lineupEntry.setAttribute('data-entry-index', entryIndex);
+                    lineupEntry.dataset.player = entry.player;
+                    lineupEntry.dataset.stat = entry.stat;
+                    const opponent = getOpponent(entry.match);
+                    const time = formatTime(entry.date);
+                    const day = formatDay(entry.date);
+                    lineupEntry.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <img src="${entry.image}" alt="${entry.player}">
+                            <div class="entry-info">
+                                <div>${entry.player} (${entry.category} - ${entry.stat})</div>
+                                <div class="status">vs ${opponent} on ${day} at ${time}</div>
+                            </div>
+                            <div class="entry-value">${entry.type}</div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 0%;"></div>
+                            <div class="progress-value">0.0</div>
+                        </div>
+                    `;
+                    lineupCard.appendChild(lineupEntry);
+                });
+
+                const lineupFooter = document.createElement('div');
+                lineupFooter.innerHTML = `
+                    <div>Entry Fee: £${lineup.entryFee.toFixed(2)}</div>
+                    <div>Potential Payout: £${lineup.potentialPayout.toFixed(2)}</div>
+                `;
+                lineupCard.appendChild(lineupFooter);
+
+                lineupsContainer.appendChild(lineupCard);
+            });
+
+            // Update progress bars based on stats
+            finalizedLineups.forEach((lineup, lineupIndex) => {
+                lineup.entries.forEach((entry, entryIndex) => {
+                    const value = playerStats[entry.player] || 0;
+                    updateProgressBar(entry.player, entry.stat, value, entry.type, lineupIndex, entryIndex);
+                });
+            });
+        }
+    });
+</script>
+</body>
+</html>
