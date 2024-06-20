@@ -133,14 +133,19 @@
                         password,
                         dob,
                         idPhoto: reader.result,
-                        verified: false
+                        verified: false,
+                        balance: 0 // Initial balance
                     };
 
                     let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-                    accounts.push(account);
-                    localStorage.setItem('accounts', JSON.stringify(accounts));
-                    
-                    alert('Registration submitted. Awaiting verification.');
+                    if (accounts.find(acc => acc.email === email)) {
+                        alert('Account with this email already exists.');
+                    } else {
+                        accounts.push(account);
+                        localStorage.setItem('accounts', JSON.stringify(accounts));
+                        alert('Registration submitted. Awaiting verification.');
+                        window.location.href = 'login.html'; // Redirect to login page
+                    }
                 };
                 reader.readAsDataURL(idPhoto);
             }
@@ -148,6 +153,7 @@
     </script>
 </body>
 </html>
+
 
 
 
