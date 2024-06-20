@@ -125,9 +125,17 @@
             const dob = document.getElementById('dob').value;
             const idPhoto = document.getElementById('idPhoto').files[0];
 
+            console.log("Form submitted");
+            console.log("Email:", email);
+            console.log("Password:", password);
+            console.log("Date of Birth:", dob);
+            console.log("ID Photo:", idPhoto);
+
             if (idPhoto) {
                 const reader = new FileReader();
                 reader.onloadend = function() {
+                    console.log("FileReader onloadend triggered");
+
                     const account = {
                         email,
                         password,
@@ -138,21 +146,31 @@
                     };
 
                     let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+                    console.log("Accounts before:", accounts);
+
                     if (accounts.find(acc => acc.email === email)) {
                         alert('Account with this email already exists.');
                     } else {
                         accounts.push(account);
                         localStorage.setItem('accounts', JSON.stringify(accounts));
+                        console.log("Accounts after:", accounts);
                         alert('Registration submitted. Awaiting verification.');
                         window.location.href = 'login.html'; // Redirect to login page
                     }
                 };
+                reader.onerror = function(error) {
+                    console.log("FileReader error:", error);
+                    alert("Error reading ID photo.");
+                };
                 reader.readAsDataURL(idPhoto);
+            } else {
+                alert("Please upload a photo of your ID.");
             }
         });
     </script>
 </body>
 </html>
+
 
 
 
