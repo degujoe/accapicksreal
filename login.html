@@ -110,10 +110,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Initialize Supabase
         const SUPABASE_URL = 'https://tsneyqyalhqtojcfganl.supabase.co';
-        const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -121,32 +121,33 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            const { user, session, error } = await supabase.auth.signIn({
-                email,
-                password
-            });
+            try {
+                const { user, session, error } = await supabase.auth.signIn({
+                    email,
+                    password
+                });
 
-            if (error) {
-                console.error('Login error:', error);
+                if (error) {
+                    throw error;
+                }
+
+                const { data, error: userError } = await supabase.from('users').select('*').eq('id', user.id).single();
+
+                if (userError) {
+                    throw userError;
+                }
+
+                if (!data.verified) {
+                    alert('Account not verified. Please wait for verification.');
+                    return;
+                }
+
+                alert('Login successful!');
+                // Redirect to a logged-in page or dashboard
+            } catch (error) {
+                console.error('Error:', error);
                 alert('Failed to login. Please check your credentials and try again.');
-                return;
             }
-
-            const { data, error: userError } = await supabase.from('users').select('*').eq('id', user.id).single();
-
-            if (userError) {
-                console.error('User fetch error:', userError);
-                alert('Failed to fetch user data. Please try again.');
-                return;
-            }
-
-            if (!data.verified) {
-                alert('Account not verified. Please wait for verification.');
-                return;
-            }
-
-            alert('Login successful!');
-            // Redirect to a logged-in page or dashboard
         });
     </script>
 </body>
