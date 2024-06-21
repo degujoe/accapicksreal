@@ -10,35 +10,60 @@
             color: #FFFFFF;
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            box-sizing: border-box;
         }
-        .admin-container {
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0d0d0d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 60px; /* Ensure it doesn't overlap with the header */
+            box-sizing: border-box;
+        }
+
+        .account {
             background-color: #1a1a1a;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 400px;
-        }
-        .admin-container h2 {
-            margin-top: 0;
-            text-align: center;
-        }
-        .account {
             margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #333;
-            border-radius: 5px;
+            box-sizing: border-box;
         }
+
+        .account h3 {
+            margin-top: 0;
+        }
+
         .account img {
-            width: 100%;
-            max-width: 150px;
-            margin-bottom: 10px;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
         }
+
         .account button {
+            width: 100%;
             padding: 10px;
             border: none;
             background-color: #BCF527;
@@ -47,61 +72,93 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
+
         .account button:hover {
             background-color: #b321ec;
             color: #ffffff;
         }
-        .account button.verify {
-            background-color: #007bff;
-        }
-        .account button.verify:hover {
-            background-color: #0069d9;
-        }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>Verify Accounts</h2>
+    <header class="header">
+        <div class="logo">ACCAPICKS</div>
+    </header>
+    <div class="content">
+        <h2>Accounts Pending Verification</h2>
         <div id="accountsContainer"></div>
     </div>
 
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script>
-        function loadAccounts() {
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_-aoPEuHR99zN9xYI3BeNf0Ud2frW1vk",
+            authDomain: "accapicksgit.firebaseapp.com",
+            projectId: "accapicksgit",
+            storageBucket: "accapicksgit.appspot.com",
+            messagingSenderId: "251876374908",
+            appId: "1:251876374908:web:c0dd05aeb60182d8800cf9",
+            measurementId: "G-XP1D7BPPM2"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        document.addEventListener('DOMContentLoaded', function() {
             const accountsContainer = document.getElementById('accountsContainer');
-            accountsContainer.innerHTML = '';
-            const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
 
-            accounts.forEach((account, index) => {
-                const accountDiv = document.createElement('div');
-                accountDiv.className = 'account';
-                accountDiv.innerHTML = `
-                    <p><strong>Email:</strong> ${account.email}</p>
-                    <p><strong>Date of Birth:</strong> ${account.dob}</p>
-                    <p><strong>Verified:</strong> ${account.verified ? 'Yes' : 'No'}</p>
-                    <img src="${account.idPhoto}" alt="ID Photo">
-                    <button class="verify" onclick="verifyAccount(${index})">Verify</button>
-                    <button onclick="deleteAccount(${index})">Delete</button>
-                `;
-                accountsContainer.appendChild(accountDiv);
-            });
-        }
+            function fetchUnverifiedAccounts() {
+                db.collection('users').where('verified', '==', false).get()
+                    .then(snapshot => {
+                        accountsContainer.innerHTML = '';
 
-        function verifyAccount(index) {
-            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            accounts[index].verified = true;
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-            loadAccounts();
-        }
+                        if (snapshot.empty) {
+                            accountsContainer.innerHTML = '<p>No accounts pending verification.</p>';
+                        } else {
+                            snapshot.forEach(doc => {
+                                const user = doc.data();
+                                const userId = doc.id;
 
-        function deleteAccount(index) {
-            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-            accounts.splice(index, 1);
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-            loadAccounts();
-        }
+                                const accountDiv = document.createElement('div');
+                                accountDiv.className = 'account';
 
-        document.addEventListener('DOMContentLoaded', loadAccounts);
+                                accountDiv.innerHTML = `
+                                    <h3>${user.email}</h3>
+                                    <p>Date of Birth: ${user.dob}</p>
+                                    <img src="${user.idPhoto}" alt="ID Photo">
+                                    <button onclick="verifyAccount('${userId}')">Verify</button>
+                                `;
+                                accountsContainer.appendChild(accountDiv);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching accounts:', error);
+                        accountsContainer.innerHTML = '<p>Error fetching accounts.</p>';
+                    });
+            }
+
+            window.verifyAccount = function(userId) {
+                db.collection('users').doc(userId).update({ verified: true })
+                    .then(() => {
+                        alert('User verified');
+                        fetchUnverifiedAccounts();
+                    })
+                    .catch(error => {
+                        console.error('Error verifying user:', error);
+                        alert('An error occurred. Please try again.');
+                    });
+            }
+
+            fetchUnverifiedAccounts();
+        });
     </script>
 </body>
 </html>
