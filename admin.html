@@ -91,70 +91,40 @@
         <div id="accountsContainer"></div>
     </div>
 
-    <!-- Add Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script>
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC_-aoPEuHR99zN9xYI3BeNf0Ud2frW1vk",
-            authDomain: "accapicksgit.firebaseapp.com",
-            projectId: "accapicksgit",
-            storageBucket: "accapicksgit.appspot.com",
-            messagingSenderId: "251876374908",
-            appId: "1:251876374908:web:c0dd05aeb60182d8800cf9",
-            measurementId: "G-XP1D7BPPM2"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
         document.addEventListener('DOMContentLoaded', function() {
             const accountsContainer = document.getElementById('accountsContainer');
 
             function fetchUnverifiedAccounts() {
-                db.collection('users').where('verified', '==', false).get()
-                    .then(snapshot => {
-                        accountsContainer.innerHTML = '';
+                const users = JSON.parse(localStorage.getItem('users')) || [];
 
-                        if (snapshot.empty) {
-                            accountsContainer.innerHTML = '<p>No accounts pending verification.</p>';
-                        } else {
-                            snapshot.forEach(doc => {
-                                const user = doc.data();
-                                const userId = doc.id;
+                accountsContainer.innerHTML = '';
 
-                                const accountDiv = document.createElement('div');
-                                accountDiv.className = 'account';
+                const unverifiedUsers = users.filter(user => !user.verified);
 
-                                accountDiv.innerHTML = `
-                                    <h3>${user.email}</h3>
-                                    <p>Date of Birth: ${user.dob}</p>
-                                    <img src="${user.idPhoto}" alt="ID Photo">
-                                    <button onclick="verifyAccount('${userId}')">Verify</button>
-                                `;
-                                accountsContainer.appendChild(accountDiv);
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching accounts:', error);
-                        accountsContainer.innerHTML = '<p>Error fetching accounts.</p>';
+                if (unverifiedUsers.length === 0) {
+                    accountsContainer.innerHTML = '<p>No accounts pending verification.</p>';
+                } else {
+                    unverifiedUsers.forEach((user, index) => {
+                        const accountDiv = document.createElement('div');
+                        accountDiv.className = 'account';
+
+                        accountDiv.innerHTML = `
+                            <h3>${user.email}</h3>
+                            <p>Date of Birth: ${user.dob}</p>
+                            <img src="${user.idPhoto}" alt="ID Photo">
+                            <button onclick="verifyAccount(${index})">Verify</button>
+                        `;
+                        accountsContainer.appendChild(accountDiv);
                     });
+                }
             }
 
-            window.verifyAccount = function(userId) {
-                db.collection('users').doc(userId).update({ verified: true })
-                    .then(() => {
-                        alert('User verified');
-                        fetchUnverifiedAccounts();
-                    })
-                    .catch(error => {
-                        console.error('Error verifying user:', error);
-                        alert('An error occurred. Please try again.');
-                    });
+            window.verifyAccount = function(index) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                users[index].verified = true;
+                localStorage.setItem('users', JSON.stringify(users));
+                fetchUnverifiedAccounts();
             }
 
             fetchUnverifiedAccounts();
@@ -162,4 +132,6 @@
     </script>
 </body>
 </html>
+
+
 
