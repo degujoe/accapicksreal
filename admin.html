@@ -93,10 +93,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Initialize Supabase
         const SUPABASE_URL = 'https://tsneyqyalhqtojcfganl.supabase.co';
-        const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.addEventListener('DOMContentLoaded', async function() {
             const accountsContainer = document.getElementById('accountsContainer');
@@ -148,6 +148,7 @@
     </script>
 </body>
 </html>
+
 
 
 
