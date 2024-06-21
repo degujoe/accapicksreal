@@ -116,60 +116,79 @@
         </form>
     </div>
 
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
     <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_-aoPEuHR99zN9xYI3BeNf0Ud2frW1vk",
+            authDomain: "accapicksgit.firebaseapp.com",
+            projectId: "accapicksgit",
+            storageBucket: "accapicksgit.appspot.com",
+            messagingSenderId: "251876374908",
+            appId: "1:251876374908:web:c0dd05aeb60182d8800cf9",
+            measurementId: "G-XP1D7BPPM2"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const dob = document.getElementById('dob').value;
             const idPhoto = document.getElementById('idPhoto').files[0];
 
-            console.log("Form submitted");
-            console.log("Email:", email);
-            console.log("Password:", password);
-            console.log("Date of Birth:", dob);
-            console.log("ID Photo:", idPhoto);
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const userId = userCredential.user.uid;
+                    const storageRef = storage.ref(`idPhotos/${userId}`);
+                    const uploadTask = storageRef.put(idPhoto);
 
-            if (idPhoto) {
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    console.log("FileReader onloadend triggered");
-
-                    const account = {
-                        email,
-                        password,
-                        dob,
-                        idPhoto: reader.result,
-                        verified: false,
-                        balance: 0 // Initial balance
-                    };
-
-                    let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-                    console.log("Accounts before:", accounts);
-
-                    if (accounts.find(acc => acc.email === email)) {
-                        alert('Account with this email already exists.');
-                    } else {
-                        accounts.push(account);
-                        localStorage.setItem('accounts', JSON.stringify(accounts));
-                        console.log("Accounts after:", accounts);
-                        alert('Registration submitted. Awaiting verification.');
-                        window.location.href = 'login.html'; // Redirect to login page
-                    }
-                };
-                reader.onerror = function(error) {
-                    console.log("FileReader error:", error);
-                    alert("Error reading ID photo.");
-                };
-                reader.readAsDataURL(idPhoto);
-            } else {
-                alert("Please upload a photo of your ID.");
-            }
+                    uploadTask.on('state_changed',
+                        snapshot => {},
+                        error => {
+                            console.error('Upload error:', error);
+                            alert('Failed to upload ID photo. Please try again.');
+                        },
+                        () => {
+                            uploadTask.snapshot.ref.getDownloadURL()
+                                .then(downloadURL => {
+                                    db.collection('users').doc(userId).set({
+                                        email,
+                                        dob,
+                                        idPhoto: downloadURL,
+                                        verified: false,
+                                        balance: 0
+                                    })
+                                    .then(() => {
+                                        alert('Registration successful. Awaiting verification.');
+                                        window.location.href = 'login.html';
+                                    })
+                                    .catch(error => {
+                                        console.error('Database error:', error);
+                                        alert('Failed to save user data. Please try again.');
+                                    });
+                                });
+                        });
+                })
+                .catch(error => {
+                    console.error('Registration error:', error);
+                    alert('Failed to register. Please try again.');
+                });
         });
     </script>
 </body>
 </html>
+
 
 
 
