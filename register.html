@@ -118,10 +118,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        // Initialize Supabase
         const SUPABASE_URL = 'https://tsneyqyalhqtojcfganl.supabase.co';
-        const SUPABASE_PUBLIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzbmV5cXlhbGhxdG9qY2ZnYW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg5ODg3OTQsImV4cCI6MjAzNDU2NDc5NH0.poEs_UIcYaSueh5LN8bWrNGXCaVpD7VCZlqMQmG3gGQ';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.getElementById('registerForm').addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -131,53 +131,59 @@
             const dob = document.getElementById('dob').value;
             const idPhoto = document.getElementById('idPhoto').files[0];
 
-            // Upload ID Photo to Storage
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('id-photos')
-                .upload(`public/${email}-${idPhoto.name}`, idPhoto);
+            try {
+                // Upload ID Photo to Storage
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('id-photos')
+                    .upload(`public/${email}-${idPhoto.name}`, idPhoto);
 
-            if (uploadError) {
-                console.error('Upload error:', uploadError);
-                alert('Failed to upload ID photo. Please try again.');
-                return;
-            }
-
-            // Register User
-            const { user, session, error } = await supabase.auth.signUp({
-                email,
-                password
-            });
-
-            if (error) {
-                console.error('Registration error:', error);
-                alert('Failed to register. Please try again.');
-                return;
-            }
-
-            // Store User Details in Database
-            const { data, error: dbError } = await supabase.from('users').insert([
-                {
-                    id: user.id,
-                    email,
-                    dob,
-                    idPhoto: uploadData.Key,
-                    verified: false,
-                    balance: 0
+                if (uploadError) {
+                    throw uploadError;
                 }
-            ]);
 
-            if (dbError) {
-                console.error('Database error:', dbError);
-                alert('Failed to save user data. Please try again.');
-                return;
+                console.log("ID photo uploaded successfully:", uploadData);
+
+                // Register User
+                const { user, session, error: authError } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+
+                if (authError) {
+                    throw authError;
+                }
+
+                console.log("User registered successfully:", user);
+
+                // Store User Details in Database
+                const { data, error: dbError } = await supabase.from('users').insert([
+                    {
+                        id: user.id,
+                        email,
+                        dob,
+                        idPhoto: uploadData.Key,
+                        verified: false,
+                        balance: 0
+                    }
+                ]);
+
+                if (dbError) {
+                    throw dbError;
+                }
+
+                console.log("User data saved successfully:", data);
+
+                alert('Registration successful. Awaiting verification.');
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to register. Please try again.');
             }
-
-            alert('Registration successful. Awaiting verification.');
-            window.location.href = 'login.html';
         });
     </script>
 </body>
 </html>
+
 
 
 
