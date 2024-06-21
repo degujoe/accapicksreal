@@ -144,16 +144,21 @@
                 console.log("ID photo uploaded successfully:", uploadData);
 
                 // Register User
-                const { user, session, error: authError } = await supabase.auth.signUp({
+                const { data: userData, error: authError } = await supabase.auth.signUp({
                     email,
-                    password
+                    password,
+                    options: {
+                        emailRedirectTo: 'https://degujoe.github.io/accapicksreal/'
+                    }
                 });
 
                 if (authError) {
                     throw authError;
                 }
 
-                console.log("User registered successfully:", user);
+                console.log("User registered successfully:", userData);
+
+                const user = userData.user;
 
                 // Store User Details in Database
                 const { data, error: dbError } = await supabase.from('users').insert([
@@ -173,7 +178,7 @@
 
                 console.log("User data saved successfully:", data);
 
-                alert('Registration successful. Awaiting verification.');
+                alert('Registration successful. Please check your email to confirm your registration.');
                 window.location.href = 'login.html';
             } catch (error) {
                 console.error('Error:', error);
@@ -183,6 +188,7 @@
     </script>
 </body>
 </html>
+
 
 
 
